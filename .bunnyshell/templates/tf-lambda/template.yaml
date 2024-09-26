@@ -1,0 +1,79 @@
+# Template Documentation
+name: Terraform AWS Lambda
+description: The template is used to create a Lambda Function in AWS using Terraform.
+tags:
+    - terraform
+    - lambda
+    - aws
+    - serverless
+icons: [ 'terraform','aws' ]
+categories:
+    - terraform
+    - cloud
+    - aws
+stack:
+  packages:
+    - name: Package name
+      version: 'Specify Version' #must be an integer
+variables:
+  - description: 'A unique name for your Lambda Function.'  
+    name: 'function_name'
+    type: 'string'
+  - description: 'The path to the function's deployment package within the local filesystem. If defined. No S3 support'  
+    name: 'filename'
+    type: 'string'
+  - description: 'Description of what your Lambda Function does.'  
+    name: 'description'
+    type: 'string'
+  - description: 'See Runtimes for valid values.'  
+    name: 'runtime'
+    type: 'string'
+  - description: 'The function entrypoint in your code.'  
+    name: 'handler'
+    type: 'string'
+  - description: 'Amount of memory in MB your Lambda Function can use at runtime. Defaults to 128.'  
+    name: 'memory_size'
+    type: 'string'
+  - description: 'The amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda'  
+    name: 'concurrency'
+    type: 'string'
+  - description: 'The amount of time your Lambda Function has to run in seconds. Defaults to 5'  
+    name: 'lambda_timeout'
+    type: 'string'
+  - description: 'IAM role attached to the Lambda Function. This governs both who / what can invoke your Lambda'  
+    name: 'role_arn'
+    type: 'string'
+  - description: 'A mapping of tags to assign to the object.'  
+    name: 'tags'
+    type: 'string'
+  - description: 'Provide this to allow your function to access your VPC. Fields documented below. See Lambda in VPC.'  
+    name: 'vpc_config'
+    type: 'string'
+  - description: 'Provide this to allow your function to mount your EFS file system. Fields documented below. See Lambda'  
+    name: 'file_system_config'
+    type: 'string'
+  - description: 'Use AWS X-Ray to collect data about events that your function processes, and to identify the cause of'  
+    name: 'tracing_config'
+    type: 'string'
+  - description: 'The Lambda environment's configuration settings.'  
+    name: 'environment'
+    type: 'string'
+  - description: 'Whether to publish creation/change as new Lambda Function Version. Defaults to true.'  
+    name: 'publish'
+    type: 'string'
+  - description: 'Specifies the number of days you want to retain log events in the specified log group.'  
+    name: 'log_retention'
+    type: 'string'
+  - description: 'Maximum age of a request that Lambda sends to a function for processing in seconds. Valid values'  
+    name: 'event_age_in_seconds'
+    type: 'string'
+  - description: 'Maximum number of times to retry when the function returns an error. Valid values between 0 and 2.'  
+    name: 'retry_attempts'
+    type: 'string'
+  - description: 'Used to trigger updates when file contents change.  Must be set to a base64-encoded SHA256 hash of the'  
+    name: 'source_code_hash'
+    type: 'string'
+  - description: 'List of Lambda Layer Version ARNs (maximum of 5) to attach to your Lambda Function'  
+    name: 'layers'
+    type: 'string'
+discoverable: true

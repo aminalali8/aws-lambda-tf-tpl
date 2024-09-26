@@ -1,0 +1,108 @@
+# Bunnyshell YAML Configuration
+kind: Environment
+name: tf-lambda
+type: primary
+templateVariables: 
+    function_name: ""
+    filename: ""
+    description: ""
+    runtime: ""
+    handler: ""
+    memory_size: ""
+    concurrency: ""
+    lambda_timeout: ""
+    role_arn: ""
+    tags: ""
+    vpc_config: ""
+    file_system_config: ""
+    tracing_config: ""
+    environment: ""
+    publish: ""
+    log_retention: ""
+    event_age_in_seconds: ""
+    retry_attempts: ""
+    source_code_hash: ""
+    layers: ""
+environmentVariables: 
+    AWS_ACCESS_KEY_ID: SECRET("REQUIRED")
+    AWS_SECRET_ACCESS_KEY: SECRET("REQUIRED")
+    AWS_DEFAULT_REGION: SECRET("REQUIRED")
+components:
+    # Terraform
+    - 
+        kind: Terraform
+        name: lambda
+        gitRepo: "https://github.com/bunnyshell/templates.git"
+        gitBranch: main
+        gitApplicationPath: /lambda
+        runnerImage: "hashicorp/terraform:1.5"
+        deploy:
+        - 'cd lambda'
+        - |
+            echo <<EOL > variables.tfvars
+            function_name = "{{ template.vars.function_name }}"
+            filename = "{{ template.vars.filename }}"
+            description = "{{ template.vars.description }}"
+            runtime = "{{ template.vars.runtime }}"
+            handler = "{{ template.vars.handler }}"
+            memory_size = "{{ template.vars.memory_size }}"
+            concurrency = "{{ template.vars.concurrency }}"
+            lambda_timeout = "{{ template.vars.lambda_timeout }}"
+            role_arn = "{{ template.vars.role_arn }}"
+            tags = "{{ template.vars.tags }}"
+            vpc_config = "{{ template.vars.vpc_config }}"
+            file_system_config = "{{ template.vars.file_system_config }}"
+            tracing_config = "{{ template.vars.tracing_config }}"
+            environment = "{{ template.vars.environment }}"
+            publish = "{{ template.vars.publish }}"
+            log_retention = "{{ template.vars.log_retention }}"
+            event_age_in_seconds = "{{ template.vars.event_age_in_seconds }}"
+            retry_attempts = "{{ template.vars.retry_attempts }}"
+            source_code_hash = "{{ template.vars.source_code_hash }}"
+            layers = "{{ template.vars.layers }}"
+            EOL
+        - "/bns/helpers/terraform/get_managed_backend > zz_backend_override.tf"
+        - "terraform init -input=false -no-color"
+        - 'terraform apply -var-file="variables.tfvars" -input=false -auto-approve -no-color'
+        - "BNS_TF_STATE_LIST=`terraform show -json`"
+        - "arn = `terraform output -raw arn`" 
+        - "version = `terraform output -raw version`" 
+        - "name = `terraform output -raw name`" 
+        - "invoke_arn = `terraform output -raw invoke_arn`" 
+        - "cloudwatch_logs_arn = `terraform output -raw cloudwatch_logs_arn`" 
+        - "cloudwatch_logs_name = `terraform output -raw cloudwatch_logs_name`" 
+        destroy:
+        - 'cd lambda'
+        - |
+            echo <<EOL > variables.tfvars
+            function_name = "{{ template.vars.function_name }}"
+            filename = "{{ template.vars.filename }}"
+            description = "{{ template.vars.description }}"
+            runtime = "{{ template.vars.runtime }}"
+            handler = "{{ template.vars.handler }}"
+            memory_size = "{{ template.vars.memory_size }}"
+            concurrency = "{{ template.vars.concurrency }}"
+            lambda_timeout = "{{ template.vars.lambda_timeout }}"
+            role_arn = "{{ template.vars.role_arn }}"
+            tags = "{{ template.vars.tags }}"
+            vpc_config = "{{ template.vars.vpc_config }}"
+            file_system_config = "{{ template.vars.file_system_config }}"
+            tracing_config = "{{ template.vars.tracing_config }}"
+            environment = "{{ template.vars.environment }}"
+            publish = "{{ template.vars.publish }}"
+            log_retention = "{{ template.vars.log_retention }}"
+            event_age_in_seconds = "{{ template.vars.event_age_in_seconds }}"
+            retry_attempts = "{{ template.vars.retry_attempts }}"
+            source_code_hash = "{{ template.vars.source_code_hash }}"
+            layers = "{{ template.vars.layers }}"
+            EOL
+        - "/bns/helpers/terraform/get_managed_backend > zz_backend_override.tf"
+        - "terraform init -input=false -no-color"
+        - 'terraform destroy -var-file="variables.tfvars"  -input=false -auto-approve -no-color'
+        exportVariables:
+        - arn
+        - version
+        - name
+        - invoke_arn
+        - cloudwatch_logs_arn
+        - cloudwatch_logs_name
