@@ -1,86 +1,91 @@
-# Bunnyshell YAML Configuration
 kind: Environment
-name: tf-lambda
+name: 'Copy of test-lambda-draft'
 type: primary
-templateVariables: 
-    lambda_function_name: "my_custom_lambda"   # Name of the Lambda function
-    lambda_runtime: "python3.9"   # Runtime for the Lambda function (can be nodejs18.x, nodejs16.x, python3.9, python3.8, java11, go1.x)
-    lambda_handler: "lambda_function.lambda_handler"   # Handler for the Lambda function
-    lambda_zip_file: "path/to/your/lambda.zip"   # Path to the zip file containing the Lambda function code
-    lambda_environment_variables: "{ foo = 'bar' \n env = 'production' }"  # Environment variables for the Lambda function
-    cloudwatch_log_retention: 14   # CloudWatch log retention period in days
-    api_gateway_name: "my-lambda-api"   # Name of the API Gateway
-    api_gateway_stage_name: "prod"   # Stage name for the API Gateway deployment
-environmentVariables: 
-    AWS_ACCESS_KEY_ID: SECRET("REQUIRED") #REQ
-    AWS_SECRET_ACCESS_KEY: SECRET("REQUIRED") #REQ
-    AWS_SESSION_TOKEN: SECRET("VALUEGOESHERE") #OPT
-    AWS_DEFAULT_REGION: "REGION" #REQ
+templateVariables:
+    lambda_function_name: my_custom_lambda
+    lambda_runtime: python3.9
+    lambda_handler: lambda_function.lambda_handler
+    lambda_zip_file: lambda_code/lambda.zip
+    lambda_environment_variables: ''
+    cloudwatch_log_retention: 14
+    api_gateway_name: my-lambda-api
+    api_gateway_stage_name: prod
+environmentVariables:
+    AWS_ACCESS_KEY_ID: REQ
+    AWS_DEFAULT_REGION: REQ
+    AWS_SECRET_ACCESS_KEY: REQ
+    AWS_SESSION_TOKEN: OPT
 components:
-    - 
+    -
         kind: Terraform
         name: lambda
-        gitRepo: "https://github.com/aminalali8/aws-lambda-tf-tpl.git"
+        gitRepo: 'https://github.com/aminalali8/aws-lambda-tf-tpl.git'
         gitBranch: main
         gitApplicationPath: /
-        runnerImage: "hashicorp/terraform:1.5"
+        runnerImage: 'hashicorp/terraform:1.5'
         deploy:
-        - |
-            cat <<EOL > terraform.tfvars
-            # Name of the Lambda function
-            lambda_function_name = {{ template.vars.lambda_function_name }}
+            - |
+                cat <<EOL > terraform.tfvars
+                # Name of the Lambda function
+                lambda_function_name = "{{ template.vars.lambda_function_name }}"
 
-            # Runtime for the Lambda function (can be nodejs18.x, nodejs16.x, python3.9, python3.8, java11, go1.x)
-            lambda_runtime = {{ template.vars.lambda_runtime }}
+                # Runtime for the Lambda function (can be nodejs18.x, nodejs16.x, python3.9, python3.8, java11, go1.x)
+                lambda_runtime = "{{ template.vars.lambda_runtime }}"
 
-            # Handler for the Lambda function
-            lambda_handler = {{ template.vars.lambda_handler }}
+                # Handler for the Lambda function
+                lambda_handler = "{{ template.vars.lambda_handler }}"
 
-            # Path to the zip file containing the Lambda function code
-            lambda_zip_file = {{ template.vars.lambda_zip_file }}
+                # Path to the zip file containing the Lambda function code
+                lambda_zip_file = "{{ template.vars.lambda_zip_file }}"
 
-            # CloudWatch log retention period in days
-            cloudwatch_log_retention = {{ template.vars.cloudwatch_log_retention }}
+                # CloudWatch log retention period in days
+                cloudwatch_log_retention = {{ template.vars.cloudwatch_log_retention }}
 
-            # Name of the API Gateway
-            api_gateway_name = {{ template.vars.api_gateway_name }}
+                # Name of the API Gateway
+                api_gateway_name = "{{ template.vars.api_gateway_name }}"
 
-            # Stage name for the API Gateway deployment
-            api_gateway_stage_name = {{ template.vars.api_gateway_stage_name }}
-            
-            # Environment variables for the Lambda function
-            lambda_environment_variables = {{ template.vars.lambda_environment_variables }}
-            EOL
-        - "/bns/helpers/terraform/get_managed_backend > zz_backend_override.tf"
-        - "terraform init -input=false -no-color"
-        - 'terraform apply -var-file="terraform.tfvars" -input=false -auto-approve -no-color'
+                # Stage name for the API Gateway deployment
+                api_gateway_stage_name = "{{ template.vars.api_gateway_stage_name }}"
+
+                # Environment variables for the Lambda function
+                lambda_environment_variables =  { 
+                    foo = "bar" 
+                    env = "production" 
+                }
+                EOL
+            - '/bns/helpers/terraform/get_managed_backend > zz_backend_override.tf'
+            - 'terraform init -input=false -no-color'
+            - 'terraform apply -var-file="terraform.tfvars" -input=false -auto-approve -no-color'
         destroy:
-        - |
-            cat <<EOL > terraform.tfvars
-            # Name of the Lambda function
-            lambda_function_name = {{ template.vars.lambda_function_name }}
+            - |
+                cat <<EOL > terraform.tfvars
+                # Name of the Lambda function
+                lambda_function_name = "{{ template.vars.lambda_function_name }}"
 
-            # Runtime for the Lambda function (can be nodejs18.x, nodejs16.x, python3.9, python3.8, java11, go1.x)
-            lambda_runtime = {{ template.vars.lambda_runtime }}
+                # Runtime for the Lambda function (can be nodejs18.x, nodejs16.x, python3.9, python3.8, java11, go1.x)
+                lambda_runtime = "{{ template.vars.lambda_runtime }}"
 
-            # Handler for the Lambda function
-            lambda_handler = {{ template.vars.lambda_handler }}
+                # Handler for the Lambda function
+                lambda_handler = "{{ template.vars.lambda_handler }}"
 
-            # Path to the zip file containing the Lambda function code
-            lambda_zip_file = {{ template.vars.lambda_zip_file }}
+                # Path to the zip file containing the Lambda function code
+                lambda_zip_file = "{{ template.vars.lambda_zip_file }}"
 
-            # CloudWatch log retention period in days
-            cloudwatch_log_retention = {{ template.vars.cloudwatch_log_retention }}
+                # CloudWatch log retention period in days
+                cloudwatch_log_retention = {{ template.vars.cloudwatch_log_retention }}
 
-            # Name of the API Gateway
-            api_gateway_name = {{ template.vars.api_gateway_name }}
+                # Name of the API Gateway
+                api_gateway_name = "{{ template.vars.api_gateway_name }}"
 
-            # Stage name for the API Gateway deployment
-            api_gateway_stage_name = {{ template.vars.api_gateway_stage_name }}
-            
-            # Environment variables for the Lambda function
-            lambda_environment_variables = {{ template.vars.lambda_environment_variables }}
-            EOL
-        - "/bns/helpers/terraform/get_managed_backend > zz_backend_override.tf"
-        - "terraform init -input=false -no-color"
-        - 'terraform destroy -var-file="terraform.tfvars"  -input=false -auto-approve -no-color'
+                # Stage name for the API Gateway deployment
+                api_gateway_stage_name = "{{ template.vars.api_gateway_stage_name }}"
+
+                # Environment variables for the Lambda function
+                lambda_environment_variables =  { 
+                    foo = "bar" 
+                    env = "production" 
+                }
+                EOL
+            - '/bns/helpers/terraform/get_managed_backend > zz_backend_override.tf'
+            - 'terraform init -input=false -no-color'
+            - 'terraform destroy -var-file="terraform.tfvars"  -input=false -auto-approve -no-color'
