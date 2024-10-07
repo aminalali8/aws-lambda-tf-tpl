@@ -10,14 +10,14 @@ templateVariables:
     cloudwatch_log_retention: 14
     api_gateway_name: my-lambda-api
     api_gateway_stage_name: prod
+    APP_GIT_REPO: "git repo url"
+    GIT_PAT: "MDM0MjM5NDc2MDxxxxxxxxxxxxxxxxxxxxx"
+    GIT_USERNAME: "username"
 environmentVariables:
     AWS_ACCESS_KEY_ID: REQ
     AWS_DEFAULT_REGION: REQ
     AWS_SECRET_ACCESS_KEY: REQ
     AWS_SESSION_TOKEN: OPT
-    APP_GIT_REPO: "git repo url"
-    GIT_PAT: "MDM0MjM5NDc2MDxxxxxxxxxxxxxxxxxxxxx"
-    GIT_USERNAME: "username"
 components:
     - 
         kind: Application

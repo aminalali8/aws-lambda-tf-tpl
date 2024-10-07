@@ -47,4 +47,17 @@ variables:
   - description: 'The stage name for the API Gateway deployment (e.g., dev, prod).'
     name: 'api_gateway_stage_name'
     type: 'string'
+
+  - description: 'The Git repository URL for the application code.'
+    name: 'app_git_repo'
+    type: 'string'
+
+  - description: 'The Git username for the repository.'
+    name: 'git_username'
+    type: 'string'
+
+  - description: 'The Git Personal Access Token (PAT) for the repository.'
+    name: 'git_pat'
+    type: 'string'
+    
 discoverable: true
