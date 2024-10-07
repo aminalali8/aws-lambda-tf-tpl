@@ -44,7 +44,7 @@ components:
                 cd lambda_src
 
                 # Encode Git credentials (username and PAT) into Base64 for authorization.
-                PAT=$(echo "{{env.vars.GIT_USERNAME}}:{{env.vars.GIT_PAT}}" | base64)
+                PAT=$(echo "{{template.vars.GIT_USERNAME}}:{{template.vars.GIT_PAT}}" | base64)
 
                 # Set up the HTTP header for authentication using the encoded credentials.
                 GIT_HEADER="Authorization: Bearer $PAT"
@@ -53,7 +53,7 @@ components:
                 git init -q .
 
                 # Add the remote repository URL as 'origin'.
-                git remote add origin "{{ env.vars.APP_GIT_REPO }}"
+                git remote add origin "{{ template.vars.APP_GIT_REPO }}"
 
                 # Fetch the specified commit/tag with minimal history (shallow clone).
                 git -c http.extraHeader=$GIT_HEADER fetch --depth 1 origin "{{ components.app.imageTag }}" 2>&1
