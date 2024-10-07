@@ -130,7 +130,3 @@ components:
             - 'terraform destroy -var-file="terraform.tfvars"  -input=false -auto-approve -no-color'
         dependsOn:
             - app
-volumes:
-    - name: lambda_src_code
-      type: disk
-      size: 1Gi
