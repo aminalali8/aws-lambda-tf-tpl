@@ -10,9 +10,9 @@ templateVariables:
     cloudwatch_log_retention: 14
     api_gateway_name: my-lambda-api
     api_gateway_stage_name: prod
-    APP_GIT_REPO: "git repo url"
-    GIT_PAT: "MDM0MjM5NDc2MDxxxxxxxxxxxxxxxxxxxxx"
-    GIT_USERNAME: "username"
+    git_app_repo: "git repo url"
+    git_pat: "MDM0MjM5NDc2MDxxxxxxxxxxxxxxxxxxxxx"
+    git_username: "username"
 environmentVariables:
     AWS_ACCESS_KEY_ID: REQ
     AWS_DEFAULT_REGION: REQ
@@ -44,7 +44,7 @@ components:
                 cd lambda_src
 
                 # Encode Git credentials (username and PAT) into Base64 for authorization.
-                PAT=$(echo "{{template.vars.GIT_USERNAME}}:{{template.vars.GIT_PAT}}" | base64)
+                PAT=$(echo "{{template.vars.git_username}}:{{template.vars.git_pat}}" | base64)
 
                 # Set up the HTTP header for authentication using the encoded credentials.
                 GIT_HEADER="Authorization: Bearer $PAT"
@@ -53,7 +53,7 @@ components:
                 git init -q .
 
                 # Add the remote repository URL as 'origin'.
-                git remote add origin "{{ template.vars.APP_GIT_REPO }}"
+                git remote add origin "{{ template.vars.git_app_repo }}"
 
                 # Fetch the specified commit/tag with minimal history (shallow clone).
                 git -c http.extraHeader=$GIT_HEADER fetch --depth 1 origin "{{ components.app.imageTag }}" 2>&1
