@@ -45,7 +45,7 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
 # Upload the Lambda function code (local zip file)
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_dir  = "${path.module}/lambda_code/python"
+  source_dir  = "${path.module}/lambda_code"
   output_path = "${path.module}/lambda_code/lambda.zip"
 }
 

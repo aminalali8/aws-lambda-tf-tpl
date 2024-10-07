@@ -15,7 +15,17 @@ environmentVariables:
     AWS_DEFAULT_REGION: REQ
     AWS_SECRET_ACCESS_KEY: REQ
     AWS_SESSION_TOKEN: OPT
+    APP_GIT_REPO: "git repo url"
+    GIT_PAT: "MDM0MjM5NDc2MDxxxxxxxxxxxxxxxxxxxxx"
+    GIT_USERNAME: "username"
 components:
+    - 
+        kind: Application
+        name: app
+        gitRepo: "https://github.com/bunnyshell/bunnyshell.git"
+        gitBranch: master
+        gitApplicationPath: /
+        dockerCompose: {}
     -
         kind: Terraform
         name: lambda
@@ -25,6 +35,35 @@ components:
         runnerImage: 'hashicorp/terraform:1.5'
         deploy:
             - |
+                # Clone source code
+                # Create the directory where the source code will be pulled.
+                mkdir -p lambda_src
+
+                # Change to the newly created directory.
+                cd lambda_src
+
+                # Encode Git credentials (username and PAT) into Base64 for authorization.
+                PAT=$(echo "{{env.vars.GIT_USERNAME}}:{{env.vars.GIT_PAT}}" | base64)
+
+                # Set up the HTTP header for authentication using the encoded credentials.
+                GIT_HEADER="Authorization: Bearer $PAT"
+
+                # Initialize an empty Git repository in the current directory.
+                git init -q .
+
+                # Add the remote repository URL as 'origin'.
+                git remote add origin "{{ env.vars.APP_GIT_REPO }}"
+
+                # Fetch the specified commit/tag with minimal history (shallow clone).
+                git -c http.extraHeader=$GIT_HEADER fetch --depth 1 origin "{{ components.app.imageTag }}" 2>&1
+
+                # Checkout the specific commit/tag, avoiding detached head warning.
+                git -c advice.detachedHead=false checkout "{{ components.app.imageTag }}" 2>&1
+
+                # Remove the .git directory to clean up Git metadata, leaving only the source files.
+                rm -rf .git
+                
+                # Create terrform.tfvars file
                 cat <<EOL > terraform.tfvars
                 # Name of the Lambda function
                 lambda_function_name = "{{ template.vars.lambda_function_name }}"
@@ -89,3 +128,9 @@ components:
             - '/bns/helpers/terraform/get_managed_backend > zz_backend_override.tf'
             - 'terraform init -input=false -no-color'
             - 'terraform destroy -var-file="terraform.tfvars"  -input=false -auto-approve -no-color'
+        dependsOn:
+            - app
+volumes:
+    - name: lambda_src_code
+      type: disk
+      size: 1Gi
