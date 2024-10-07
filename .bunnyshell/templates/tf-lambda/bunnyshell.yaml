@@ -22,7 +22,7 @@ components:
     - 
         kind: Application
         name: app
-        gitRepo: "https://github.com/bunnyshell/bunnyshell.git"
+        gitRepo: ""
         gitBranch: master
         gitApplicationPath: /
         dockerCompose: 
