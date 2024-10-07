@@ -25,7 +25,8 @@ components:
         gitRepo: "https://github.com/bunnyshell/bunnyshell.git"
         gitBranch: master
         gitApplicationPath: /
-        dockerCompose: {}
+        dockerCompose: 
+            image: alpine
     -
         kind: Terraform
         name: lambda
